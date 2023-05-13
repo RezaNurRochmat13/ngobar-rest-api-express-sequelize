@@ -9,9 +9,9 @@ const authenticationController = require('./controller/authentication.controller
 
 app.use(express.json())
 app.use(morgan('combined'))
+app.use(authenticationController)
 app.use(userController)
 app.use(movieController)
-app.use(authenticationController)
 
 
 app.get('/ping', (req, res) => {
