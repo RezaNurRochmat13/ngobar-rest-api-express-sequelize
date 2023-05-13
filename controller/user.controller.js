@@ -1,7 +1,11 @@
-const db = require('./../models')
-const User = db.User
 const express = require('express')
 const router = express.Router()
+const db = require('./../models')
+const User = db.User
+const authenticateTokenMiddleware = require('../middleware/authentication')
+
+// Inject middleware as global middleware
+router.use(authenticateTokenMiddleware)
 
 // GET /users
 router.get('/api/users', async (request, response) => {
@@ -39,6 +43,7 @@ router.put('/api/users/:id', async (request, response) => {
   return response.status(200).json({ message: 'User updated'})
 })
 
+// DELETE /users/:id
 router.delete('/api/users/:id', async (request, response) => {
   const user = await User.findByPk(request.params.id)
 
