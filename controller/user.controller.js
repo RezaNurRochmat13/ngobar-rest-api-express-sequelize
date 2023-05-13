@@ -9,9 +9,17 @@ router.use(authenticateTokenMiddleware)
 
 // GET /users
 router.get('/api/users', async (request, response) => {
-  const users = await User.findAll()
+  const users = await User.findAll({ offset: request.query.page, limit: request.query.size })
+  const userCount = await User.count()
 
-  return response.status(200).json({data: users})
+  return response.status(200).json({
+    data: users,
+    meta: {
+      page: request.query.page,
+      count: userCount,
+      size: users.length,
+    }
+  })
 })
 
 // GET /users/:id

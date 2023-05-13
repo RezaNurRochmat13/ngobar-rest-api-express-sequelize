@@ -3,12 +3,14 @@ const morgan = require('morgan');
 const app = express();
 const PORT = 8081 || process.env.PORT;
 const userController = require('./controller/user.controller')
+const movieController = require('./controller/movie.controller')
 const authenticationController = require('./controller/authentication.controller')
 
 
 app.use(express.json())
 app.use(morgan('combined'))
 app.use(userController)
+app.use(movieController)
 app.use(authenticationController)
 
 
