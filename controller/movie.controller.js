@@ -4,14 +4,15 @@ const db = require('./../models')
 const Movie = db.Movie
 const authenticateTokenMiddleware = require('../middleware/authentication')
 const cloudinaryConfig = require('../config/cloudinary')
+const movieService = require('../service/movie.service')
 
 // Inject middleware as global middleware
 router.use(authenticateTokenMiddleware)
 
 // GET /movies
 router.get('/api/movies', async (request, response) => {
-  const movies = await Movie.findAll({ offset: request.query.page, limit: request.query.size })
-  const movieCount = await Movie.count()
+  const movies = await movieService.findAllMovies(request.query.page, request.query.size)
+  const movieCount = await movieService.countMovies()
 
   return response.status(200).json({
     data: movies,
@@ -25,7 +26,7 @@ router.get('/api/movies', async (request, response) => {
 
 // GET /movies/:id
 router.get('/api/movies/:id', async (request, response) => {
-  const movie = await Movie.findByPk(request.params.id)
+  const movie = await movieService.findByMovieId(request.params.id);
 
   if(!movie) return response.status(404).json({message: 'Movies not found'})
 
@@ -36,7 +37,6 @@ router.get('/api/movies/:id', async (request, response) => {
 router.post('/api/movies', async (request, response) => {
   // Upload movie photo to cloudinary
   const uploadedFile = await cloudinaryConfig.uploader.upload(request.files.photo.path)
-  console.log(uploadedFile);
 
   const movie = await Movie.create({
     title: request.fields.title,
