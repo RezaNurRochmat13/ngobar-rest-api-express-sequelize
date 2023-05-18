@@ -1,13 +1,16 @@
 const express = require('express');
 const morgan = require('morgan');
 const app = express();
+const formidableMiddleware = require('express-formidable');
 const PORT = 8081 || process.env.PORT;
 const userController = require('./controller/user.controller')
 const movieController = require('./controller/movie.controller')
 const authenticationController = require('./controller/authentication.controller')
+const dotenv = require('dotenv');
+dotenv.config()
 
 
-app.use(express.json())
+app.use(formidableMiddleware())
 app.use(morgan('combined'))
 app.use(authenticationController)
 app.use(userController)
