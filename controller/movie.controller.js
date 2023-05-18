@@ -3,6 +3,7 @@ const router = express.Router()
 const db = require('./../models')
 const Movie = db.Movie
 const authenticateTokenMiddleware = require('../middleware/authentication')
+const cloudinaryConfig = require('../config/cloudinary')
 
 // Inject middleware as global middleware
 router.use(authenticateTokenMiddleware)
@@ -33,11 +34,20 @@ router.get('/api/movies/:id', async (request, response) => {
 
 // POST /movies
 router.post('/api/movies', async (request, response) => {
-  const movie = await Movie.create(request.body)
+  // Upload movie photo to cloudinary
+  const uploadedFile = await cloudinaryConfig.uploader.upload(request.files.photo.path)
+  console.log(uploadedFile);
+
+  const movie = await Movie.create({
+    title: request.fields.title,
+    genre: request.fields.genre,
+    year: request.fields.year,
+    photo: uploadedFile?.secure_url
+  })
 
   if(!movie) return response.status(422).json({message: 'Failed create movie. Please try again'})
 
-  return response.status(200).json({data: movie})
+  return response.status(201).json({ data: movie })
 })
 
 // PUT /movies/:id

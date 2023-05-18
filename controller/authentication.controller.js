@@ -23,11 +23,11 @@ router.post('/auth/register', async (request, response) => {
 
 // POST /auth/login
 router.post('/auth/login', async (request, response) => {
-  const user = await User.findOne({ where: { email: request.body.email }});
+  const user = await User.findOne({ where: { email: request.fields.email }});
 
   if (!user) return response.status(401).json({message: 'Unauthenticated user or not registered user'});
 
-  const validatePassword = await bcrypt.compare(request.body.password, user.password);
+  const validatePassword = await bcrypt.compare(request.fields.password, user.password);
 
   if (!validatePassword) return response.status(401).json({message: 'Invalid password'});
 
